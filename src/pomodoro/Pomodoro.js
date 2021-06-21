@@ -232,7 +232,11 @@ function Pomodoro() {
       <div>
         {/* TODO: This area should show only when there is an active focus or break - i.e. the session is running or is paused */}
         <div className="row mb-2">
-            {session !== null ? (
+            {session === null ? (
+              <div className="col">
+                
+              </div>
+            ):(
               <div className="col">
                 <h2 data-testid="session-title">
                   {session?.label} for {session?.label === "Focusing" ? minutesToDuration(focusDuration): minutesToDuration(breakDuration)} minutes
@@ -241,10 +245,7 @@ function Pomodoro() {
                   {secondsToDuration(session?.timeRemaining)} remaining
                 </p>
               </div>
-            ) : (
-              <div className="col">
-                <h1>paused</h1>
-              </div>
+
             )}
 
         </div>
