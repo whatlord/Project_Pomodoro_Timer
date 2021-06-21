@@ -117,6 +117,13 @@ function Pomodoro() {
   const handleBreakPlus = () => {
     setBreakDuration(Math.min(15, breakDuration + 1));
   };
+
+  const handleStop = () => {
+    setFocusDuration(focusDuration)
+    setBreakDuration(breakDuration)
+    setIsTimerRunning(false)
+    setSession(null)
+  }
   console.log(session)
   
   return (
@@ -135,8 +142,7 @@ function Pomodoro() {
                 className="btn btn-secondary"
                 data-testid="decrease-focus"
                 onClick={handleFocusMinus}
-                disabled={focusDuration === 5}
-                disabled={session !== null}
+                disabled={focusDuration === 5 || session !== null}
               >
                 <span className="oi oi-minus" />
               </button>
@@ -146,8 +152,7 @@ function Pomodoro() {
                 className="btn btn-secondary"
                 data-testid="increase-focus"
                 onClick={handleFocusPlus}
-                disabled={focusDuration === 60}
-                disabled={session !== null}
+                disabled={focusDuration === 60 || session !== null}
               >
                 <span className="oi oi-plus" />
               </button>
@@ -168,8 +173,7 @@ function Pomodoro() {
                   className="btn btn-secondary"
                   data-testid="decrease-break"
                   onClick={handleBreakMinus}
-                  disabled={breakDuration === 1}
-                  disabled={session !== null}
+                  disabled={breakDuration === 1 || session !== null}
                 >
                   <span className="oi oi-minus" />
                 </button>
@@ -179,8 +183,7 @@ function Pomodoro() {
                   className="btn btn-secondary"
                   data-testid="increase-break"
                   onClick={handleBreakPlus}
-                  disabled={breakDuration === 15}
-                  disabled={session !== null}
+                  disabled={breakDuration === 15 || session !== null}
                 >
                   <span className="oi oi-plus" />
                 </button>
@@ -218,6 +221,8 @@ function Pomodoro() {
               className="btn btn-secondary"
               data-testid="stop"
               title="Stop the session"
+              disabled={session === null}
+              onClick={handleStop}
             >
               <span className="oi oi-media-stop" />
             </button>
@@ -227,16 +232,21 @@ function Pomodoro() {
       <div>
         {/* TODO: This area should show only when there is an active focus or break - i.e. the session is running or is paused */}
         <div className="row mb-2">
-          <div className="col">
-            {/* TODO: Update message below to include current session (Focusing or On Break) total duration */}
-            <h2 data-testid="session-title">
-              {session?.label} for {minutesToDuration(focusDuration)} minutes
-            </h2>
-            {/* TODO: Update message below correctly format the time remaining in the current session */}
-            <p className="lead" data-testid="session-sub-title">
-              {secondsToDuration(session?.timeRemaining)} remaining
-            </p>
-          </div>
+            {session !== null ? (
+              <div className="col">
+                <h2 data-testid="session-title">
+                  {session?.label} for {session?.label === "Focusing" ? minutesToDuration(focusDuration): minutesToDuration(breakDuration)} minutes
+                </h2>
+                <p className="lead" data-testid="session-sub-title">
+                  {secondsToDuration(session?.timeRemaining)} remaining
+                </p>
+              </div>
+            ) : (
+              <div className="col">
+                <h1>paused</h1>
+              </div>
+            )}
+
         </div>
         <div className="row mb-2">
           <div className="col">
@@ -246,8 +256,8 @@ function Pomodoro() {
                 role="progressbar"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                aria-valuenow={(focusDuration*60-session?.timeRemaining)/(focusDuration*60)*100} // TODO: Increase aria-valuenow as elapsed time increases
-                style={{ width: ((focusDuration*60-session?.timeRemaining)/(focusDuration*60)*100)+"%" }} // TODO: Increase width % as elapsed time increases
+                aria-valuenow={session?.label === "Focusing" ? (focusDuration*60-session?.timeRemaining)/(focusDuration*60)*100 : (breakDuration*60-session?.timeRemaining)/(breakDuration*60)*100} // TODO: Increase aria-valuenow as elapsed time increases
+                style={{ width: session?.label === "Focusing" ? ((focusDuration*60-session?.timeRemaining)/(focusDuration*60)*100)+"%"  : (breakDuration*60-session?.timeRemaining)/(breakDuration*60)*100+"%"}} // TODO: Increase width % as elapsed time increases
               />
             </div>
           </div>
