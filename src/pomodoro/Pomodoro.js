@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import classNames from "../utils/class-names";
 import useInterval from "../utils/useInterval";
 import { minutesToDuration, secondsToDuration } from "../utils/duration";
+import ShowTime from "./ShowTime.js"
+import ProgressBar from "./ProgressBar.js"
+import StopStartButtons from "./StopStartButtons.js"
 // These functions are defined outside of the component to insure they do not have access to state
 // and are, therefore more likely to be pure.
 
@@ -193,75 +196,21 @@ function Pomodoro() {
         </div>
       </div>
       <div className="row">
-        <div className="col">
-          <div
-            className="btn-group btn-group-lg mb-2"
-            role="group"
-            aria-label="Timer controls"
-          >
-            <button
-              type="button"
-              className="btn btn-primary"
-              data-testid="play-pause"
-              title="Start or pause timer"
-              onClick={playPause}
-            >
-              <span
-                className={classNames({
-                  oi: true,
-                  "oi-media-play": !isTimerRunning,
-                  "oi-media-pause": isTimerRunning,
-                })}
-              />
-            </button>
-            {/* TODO: Implement stopping the current focus or break session. and disable the stop button when there is no active session */}
-            {/* TODO: Disable the stop button when there is no active session */}
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-testid="stop"
-              title="Stop the session"
-              disabled={session === null}
-              onClick={handleStop}
-            >
-              <span className="oi oi-media-stop" />
-            </button>
-          </div>
-        </div>
+
+        <StopStartButtons playPause={playPause} isTimerRunning={isTimerRunning} session={session} handleStop={handleStop} />
+
       </div>
       <div>
         {/* TODO: This area should show only when there is an active focus or break - i.e. the session is running or is paused */}
         <div className="row mb-2">
-            {session === null ? (
-              <div className="col">
-                
-              </div>
-            ):(
-              <div className="col">
-                <h2 data-testid="session-title">
-                  {session?.label} for {session?.label === "Focusing" ? minutesToDuration(focusDuration): minutesToDuration(breakDuration)} minutes
-                </h2>
-                <p className="lead" data-testid="session-sub-title">
-                  {secondsToDuration(session?.timeRemaining)} remaining
-                </p>
-              </div>
 
-            )}
+          <ShowTime session={session} focusDuration={focusDuration} breakDuration={breakDuration} />
 
         </div>
         <div className="row mb-2">
-          <div className="col">
-            <div className="progress" style={{ height: "20px" }}>
-              <div
-                className="progress-bar"
-                role="progressbar"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                aria-valuenow={session?.label === "Focusing" ? (focusDuration*60-session?.timeRemaining)/(focusDuration*60)*100 : (breakDuration*60-session?.timeRemaining)/(breakDuration*60)*100} // TODO: Increase aria-valuenow as elapsed time increases
-                style={{ width: session?.label === "Focusing" ? ((focusDuration*60-session?.timeRemaining)/(focusDuration*60)*100)+"%"  : (breakDuration*60-session?.timeRemaining)/(breakDuration*60)*100+"%"}} // TODO: Increase width % as elapsed time increases
-              />
-            </div>
-          </div>
+
+          <ProgressBar session={session} focusDuration={focusDuration} breakDuration={breakDuration} />
+
         </div>
       </div>
     </div>
