@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import classNames from "../utils/class-names";
 import useInterval from "../utils/useInterval";
-import { minutesToDuration, secondsToDuration } from "../utils/duration";
+import { minutesToDuration } from "../utils/duration";
 import ShowTime from "./ShowTime.js"
 import ProgressBar from "./ProgressBar.js"
 import StopStartButtons from "./StopStartButtons.js"
@@ -51,9 +50,6 @@ function nextSession(focusDuration, breakDuration) {
 }
 
 function Pomodoro() {
-  const preSessionState ={
-    label: "pre"
-  }
 
   // Timer starts out paused
   const [isTimerRunning, setIsTimerRunning] = useState(false);
